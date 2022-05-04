@@ -1,6 +1,5 @@
-import setup
+import config.setup
 from modules.interface.menus import menu_builder, clean_screen
-import validators;
 
 accion =  menu_builder('Bienvenido a Proyecto T',
             ['Ingresar', 'Registrarse'],
