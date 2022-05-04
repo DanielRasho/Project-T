@@ -1,7 +1,7 @@
 import pkg_resources    # Functionalities to check project requirements.
 from pkg_resources import DistributionNotFound
-from definitions import CARPETA_RAIZ
 from os import path
+from config.definitions import CARPETA_RAIZ
 
 """
 This script checks if the user has all dependencies installed. 
