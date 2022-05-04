@@ -5,6 +5,7 @@ class DatosUsuario(Enum):
     EDAD = 'edad';
     USUARIO = 'usuario';
     TELEFONO = 'telefono';
+    GENERO = 'genero'
     
 class DatosBusqueda(Enum):
     VALOR = 'valor';
