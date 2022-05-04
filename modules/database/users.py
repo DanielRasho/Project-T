@@ -1,17 +1,21 @@
-import csv
+﻿import pandas
 
 PROPIEDADES_USUARIO = (
-    "ID", 
-    "CONTRASENA", 
+    "TELEFONO", 
+    "CONTRASENA",
+    "GENERO",
+    "EDAD", 
     "NOMBRE", 
     "APELLIDO", 
-    "TELEFONO", 
-    "TRABAJO")
+    "ETIQUETAS")
+
+class Base_de_datos:
+    ruta = ""
+    def __init__(self, ruta):
+        self.ruta = ruta
 
 def actualizar_campos(file_path):
-    with open (file_path, 'w') as data_base:
-        escritor = csv.reader(data_base, delimiter="|")
-        escritor.writeheader(PROPIEDADES_USUARIO)
+    pass
 
 def crea_usuario():
     pass
