@@ -1,10 +1,9 @@
 from enum import Enum;
 
 class DatosUsuario(Enum):
-    ID = 'id';
+    TELEFONO = 'telefono';
     EDAD = 'edad';
     USUARIO = 'usuario';
-    TELEFONO = 'telefono';
     GENERO = 'genero'
     
 class DatosBusqueda(Enum):
