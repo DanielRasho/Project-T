@@ -1,4 +1,4 @@
-import csv
+﻿import csv
 
 PROPIEDADES_USUARIO = (
     "ID", 
