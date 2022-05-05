@@ -35,3 +35,18 @@ def clean_screen():
         os.system("clear")
     else:
         os.system("cls")
+
+def datosANDvalidacion_numeros():
+    x=True
+    while x == True:
+        usuario=input('Ingrese su número de teléfono\n')
+        validacion=usuario.isnumeric()
+        if validacion==False:
+            print("No has ingresado un número válido.\nRecuerda ingresar únicamente números")
+        else:
+            lenn=len(usuario)
+            if lenn == 8:
+                break
+            else:
+                print("Debe haber 8 digitos")
+    return usuario
