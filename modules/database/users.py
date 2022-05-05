@@ -1,6 +1,6 @@
-﻿import string
 import pandas as pd
 from enum import Enum
+
 
 class Campos_Usuario(Enum):
     telefono = "TELEFONO"
@@ -13,6 +13,7 @@ class Campos_Usuario(Enum):
 
 class Base_de_datos:
     ruta = ""
+
     def __init__(self, ruta):
         self.ruta = ruta
 
