@@ -1,30 +1,47 @@
 import pandas as pd 
 import numpy as np 
 
-##Funcion para agregar numeros a la lista 
-def agregar_numeros_a_listas():
+def aniadir_un_contacto(): ##Funcion para agregar un usario a la lista de contactos
+    numeros_de_telefono=[ ] ##Lista vacia donde se guardaran los numeros de los contactos que ingrese el usuario
+    usuario = 1 
 
-    lista_mumeros_de_telefonos = [] ##Lista vacia de numeros
+    nuevos_contactos = [input("Agrega los numeros separados por comas ",": \n")] ##Pide al usuario los numeros que desea agregar a la lista
 
-    numeros = input("Agregue sus numeros: ")## Variable que alamcena los numeros para despues agregarlos a la lista
+    numeros_de_telefono.append(nuevos_contactos) ##Se agregan los numeros escritos a la lista
 
-    lista_mumeros_de_telefonos.append(numeros)## Agregar la variable que contiene los numeros a la lista
+    print("Lista nueva de contactos es la siguiente: ",numeros_de_telefono) ##Muestra el valor de la "nueva lista" o lista actualizada
 
-    seguir_agregando_numeros = input("Quiere agregar otro numero? Si(1) No(2)\n") ##Opcion si desea agregar numeros
+    df = pd.DataFrame({'ID' : [usuario], 'Numero de telefono de sus contactos' : [numeros_de_telefono] }) ##Tabla de "Excel" mostrando como columna 1 el ID del usuario y columna 2 los numeros de telefonos de los contctos 
+    df.head()
 
-    while True():
-        if seguir_agregando_numeros == "1": ## Si decide agregar mas numeros sale lo siguiente
-            [] = input("Agregue el numero : ")
-            lista_mumeros_de_telefonos.append([])
-            break
-        elif seguir_agregando_numeros == "2": ## No se agregan mas numeros
-            break
-        else: 
-            seguir_agregando_numeros = input("Seleccione una opcion valida por favor: Si(1) No(2)") ## Para que seleecioe una opcion valida
+def eliminar_un_contacto():
 
+    ##Para esta funcion en teoria creo que ya deberia de estar la lista primero y no volverlos a pedir pero no se 
 
+    numeros_de_telefono=[ ] ##Lista vacia donde se guardaran los numeros de los contactos que ingrese el usuario
+    usuario = 1 ##ayuda con esto no se que hacerle 
 
+    nuevos_contactos = input("Agrega los numeros separados por comas: \n") ##Pide al usuario los numeros que desea agregar a la lista
 
-    list_rows = [ ['ID', 'Numero de telefonos'],['1', lista_mumeros_de_telefonos] ] ## Agrega la lista de numeros previamente escritos por el usuario.
-    np.savetxt("ArchivoCSV.csv", list_rows, delimiter ="|",fmt ='% s') 
+    numeros_de_telefono.append(nuevos_contactos) ##Se agregan los numeros escritos a la lista
 
+    print("Lista nueva de contactos es la siguiente: ",numeros_de_telefono) ##Muestra el valor de la "nueva lista" o lista actualizada
+
+    print(numeros_de_telefono)
+##--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------##
+    ##Realmente creo que esta seria la funcion que elimina el numero(contacto) que escriba el usuario
+    ##Tambien no se como hacer para que automaticamente se separen por comas en las listas, por ahora solo funciona pidiendole al usuario que esriba los numeros telefonicos separandolos por comas
+
+    numero_telefonicos = input("Ingrese los numero telefonicos: ") ##Ingrese los numero telefonicos para que se guarden en una lista
+
+    lista_numeros_telefonicos = numero_telefonicos.split(',') ##Convierte el tipo texto(cadena) en una lista
+
+    print("Lista nueva: ",lista_numeros_telefonicos) ##Solo muestra la lista con los numero que ingreso el usuario
+
+    numeros_eliminados = input("Ingrese el numero que quiere eliminar de la lista: ") ## Le pregunta al usuario que numero quiere eliminar y lo guarda en una variable
+
+    for x in lista_numeros_telefonicos: ##ciclo for para que busque en toda la lista el valor que tiene que eliminar
+        if x == numeros_eliminados: ##Si coincide exactamente con el que quiere eliminar lo elimina
+            lista_numeros_telefonicos.remove(x) ##Leer arriba
+        
+    print(lista_numeros_telefonicos) ##Muestra la lista actualizada
