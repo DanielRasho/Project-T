@@ -1,4 +1,4 @@
-import pandas as pd
+﻿import pandas as pd
 from enum import Enum
 
 
@@ -32,28 +32,28 @@ class Base_de_datos:
         # PARAMETROS: los dichos arriba. 
         # RETORNA: Nada
         # Anade una nueva linea al .csv con los datos del usuario dados
-        datos = pd.read_csv(ruta , sep="|")
+        datos = pd.read_csv(self.ruta , sep="|")
         datos.set_index("TELEFONO", inplace=True)
         if self.existe_usuario(telefono) == False:
             datos.loc[telefono] = [contraseña, genero, edad, nombre, apellido, etiquetas]
-            datos.to_csv(ruta, sep="|")
+            datos.to_csv(self.ruta, sep="|")
     
     def elimina_usuario(self, telefono):
         # PARAMETROS: telefono del usuario
         # RETORNA: Nada 
         # Quita la linea que contenga el telefono del usuario dado en el .csv 
-        datos = pd.read_csv(ruta, sep="|")
+        datos = pd.read_csv(self.ruta, sep="|")
         datos.set_index("TELEFONO", inplace=True)
         if self.existe_usuario(telefono) == True:
             datos.drop(telefono, axis=0, inplace=True)
-            datos.to_csv(ruta, sep="|")
+            datos.to_csv(self.ruta, sep="|")
     
     def validar_usuario(self, telefono, contrasena):
         # PARAMETROS: telefono y contrasena del usuario
         # RETORNA: Bool
         # Devuelve True si las credenciales dadas coinciden con las guardadas,
         # False si no coinciden.
-        datos = pd.read_csv(ruta, sep="|")
+        datos = pd.read_csv(self.ruta, sep="|")
         datos.set_index("TELEFONO", inplace=True)
         if self.existe_usuario(telefono) == True:
             if datos.loc[telefono]["CONTRASENA"] == contrasena:
@@ -67,7 +67,7 @@ class Base_de_datos:
         # PARAMETROS: telefono del usuario del que se quiere saber
         # RETORNA: Diccionario en formato {"CAMPO": valor ...}. Ej: {"CONTRASENA": "3421", "GENERO" : "HOMBRE" ...}
         # Devuelve un diccionario con todos los campos del usuario con sus valores, sin contar el telefono
-        datos = pd.read_csv(ruta, sep="|")
+        datos = pd.read_csv(self.ruta, sep="|")
         datos.set_index("TELEFONO", inplace=True)
         if self.existe_usuario(telefono) == True:
             return datos.loc[telefono].to_dict()
