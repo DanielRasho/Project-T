@@ -1,6 +1,6 @@
 from ast import Return
 import config.setup
-from modules.interface.menus import menu_builder
+from modules.interface.menus import menu_builder, clean_screen
 from modules.interface.menus import datosANDvalidacion_numeros
 from modules.database.users import Base_de_datos
 
@@ -9,14 +9,12 @@ accion =  menu_builder('Bienvenido a Proyecto T',
             ['Ingresar', 'Registrarse'],
             '',
             return_value= True, default_options=['Salir',])
-
-Base_de_datos = Base_de_datos("data/users.csv")
-
+            
 while accion == 'Ingresar': 
     usuario=datosANDvalidacion_numeros()
     contraseña=input('Ingrese su contraseña\n')
+    Base_de_datos = Base_de_datos("data/users.csv")
     verifacion=Base_de_datos.validar_usuario(usuario,contraseña) #aquí se está usando una función nueva
-    verifacion=True
     while verifacion==False:
         accionDos=menu_builder('Los datos no coinciden',
                     ['Intentarlo de nuevo', 'Registrarse'],
@@ -25,7 +23,6 @@ while accion == 'Ingresar':
         if accionDos==0:
             usuario=datosANDvalidacion_numeros()
             contraseña=input('Ingrese su contraseña\n')
-            #Base_de_datos = Base_de_datos("data/users.csv")
             verifacion=Base_de_datos.validar_usuario(usuario,contraseña)
         if accionDos==1:
             break
@@ -40,18 +37,17 @@ while accion == 'Ingresar':
         if seccion==0:
             busqueda=input('¿Qué estás buscando?\n') 
             busqueda=busqueda.lower()
-            #Parametros: busqueda
-            #Return: lista (lista_trabajadores)
-            #Funcion que agrupe todos los trabajadores que le puedan servir al usuario y los guarde en la lista "listado_trabajadores"
-            """trabajador_elegido=menu_builder('Tal vez uno de ellos podría ayudarte',
-                [listado_trabajadores],
+            contactos=Base_de_datos.buscar_contactos(busqueda)
+            trabajador_elegido=menu_builder('Tal vez uno de ellos podría ayudarte',
+                [contactos],
                 '',
-                return_value= False, default_options=['Salir',])
-            print(trabajador_elegido)    ##Aquí no sé cómo le vamos a hacer, pero hay que mostrar los datos del trabajador que escogió
+                return_value= True, default_options=['Salir',])
+            datos_a_mostrar=Base_de_datos.obtener_propiedades_usuario(trabajador_elegido)
+            print(datos_a_mostrar)    
             accion_con_trabajador=menu_builder('¿Quieres consultar con esta persona?',
             ['Llamar', 'Mensaje'],
             '',
-            return_value= False, default_options=['Salir',])"""
+            return_value= False, default_options=['Salir',])
         
         if seccion==1: 
             #Parametros: (ninguno) 
@@ -81,7 +77,7 @@ while accion == 'Ingresar':
         
 
 if accion == 'Registrarse':
-    new_usuario_telefono=usuario=datosANDvalidacion_numeros()
+    new_usuario_telefono=datosANDvalidacion_numeros()
     genero_usuario= menu_builder('Ingrese su género ',
             ['Hombre'],
             '',
@@ -115,7 +111,6 @@ if accion == 'Registrarse':
         contraseña_nuevo_usuario= input('Ingrese su contraseña\n')
         confirmacion=input('Ingrese nuevamente su contraseña\n')
         if contraseña_nuevo_usuario==confirmacion:
-            print('Te has registrado correctamente')
             break
     Base_de_datos.crear_usuario(
         new_usuario_telefono,
