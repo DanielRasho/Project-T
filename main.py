@@ -2,19 +2,35 @@ from ast import Return
 import config.setup
 from modules.interface.menus import menu_builder, clean_screen
 from modules.interface.menus import datosANDvalidacion_numeros
+from modules.database.users import Base_de_datos
+
 
 accion =  menu_builder('Bienvenido a Proyecto T',
             ['Ingresar', 'Registrarse'],
             '',
             return_value= True, default_options=['Salir',])
             
-if accion == 'Ingresar': 
+while accion == 'Ingresar': 
     usuario=datosANDvalidacion_numeros()
     contraseña=input('Ingrese su contraseña\n')
-    #Parametros:usuario, contraseña
-    #Return: True or false (logico), dependiendo 
-    #Funcion para verificar si el número telefonico coincide con la contraseña. Si coinciden devulve un True, sino un False
-    verifacion=True #aquí se va a llamar a la función
+    Base_de_datos = Base_de_datos("data/users.csv")
+    ##verifacion=Base_de_datos.validar_usuario(usuario,contraseña) #aquí se está usando una función nueva
+    verifacion=True
+    while verifacion==False:
+        accionDos=menu_builder('Los datos no coinciden',
+                    ['Intentarlo de nuevo', 'Registrarse'],
+                    '',
+            return_value= False, default_options=['Salir',])
+        if accionDos==0:
+            usuario=datosANDvalidacion_numeros()
+            contraseña=input('Ingrese su contraseña\n')
+            #Base_de_datos = Base_de_datos("data/users.csv")
+            verifacion=Base_de_datos.validar_usuario(usuario,contraseña)
+        if accionDos==1:
+            break
+        if accionDos==2:
+            exit()
+    
     if verifacion==True:
         seccion=menu_builder('Menus',
             ['Buscar', 'Recomendados', 'Agregar'],
@@ -22,6 +38,7 @@ if accion == 'Ingresar':
             return_value= False, default_options=['Salir',])
         if seccion==0:
             busqueda=input('¿Qué estás buscando?\n') 
+            busqueda=busqueda.lower()
             #Parametros: busqueda
             #Return: lista (lista_trabajadores)
             #Funcion que agrupe todos los trabajadores que le puedan servir al usuario y los guarde en la lista "listado_trabajadores"
@@ -58,9 +75,34 @@ if accion == 'Ingresar':
             print("Se ha agregado a su lista")
         if seccion==3:
             exit()
+    
+        
+        
 
-elif accion == 'Registrarse':
+if accion == 'Registrarse':
     new_usuario_telefono=usuario=datosANDvalidacion_numeros()
+    genero_usuario= menu_builder('Ingrese su género ',
+            ['Hombre'],
+            '',
+            return_value= True, default_options=['Mujer'])
+    edad_usuario=int(input('Ingrese su edad\n'))
+    nombre_usuario=input('Ingrese su nombre\n')
+    apellido_usario=input('Ingrese su apellido\n')
+    temporal=True
+    etiquetas=[]
+    while temporal:
+        etiqueta=input('Ingrese etiqueta\n')
+        etiqueta=etiqueta.lower()
+        etiquetas.append(etiqueta)
+        seguir= menu_builder('¿Hay otra etiqueta?',
+            ['Sí'],
+            '',
+            return_value= False, default_options=['No'])
+        if seguir == 0:
+            temporal=True
+        else: 
+            temporal=False
+    etiquetas = ",".join(etiquetas)
     contraseña_nuevo_usuario= input('Ingrese su contraseña\n')
     confirmacion=input('Ingrese nuevamente su contraseña\n')
     if contraseña_nuevo_usuario==confirmacion:
@@ -74,8 +116,14 @@ elif accion == 'Registrarse':
         if contraseña_nuevo_usuario==confirmacion:
             print('Te has registrado correctamente')
             break
-        
-
+    Base_de_datos.crear_usuario(
+        new_usuario_telefono,
+        contraseña_nuevo_usuario,
+        genero_usuario,
+        edad_usuario,
+        nombre_usuario,
+        apellido_usario,
+        etiquetas)
     #Parametros: new_usuario_telefono, contraseña_nuevo_usuario
     #Return: (nada)
     #Función que agregue esos datos al csv
