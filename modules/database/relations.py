@@ -1,5 +1,4 @@
 import pandas as pd 
-import numpy as np 
 
 def aniadir_un_contacto(): 
     # PARAMETROS: Numero telefonico
@@ -53,4 +52,4 @@ def eliminar_un_contacto():
         if x == numeros_eliminados: 
             lista_numeros_telefonicos.remove(x)
         
-    print(lista_numeros_telefonicos) 
+    print(lista_numeros_telefonicos)
