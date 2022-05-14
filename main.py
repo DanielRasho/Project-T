@@ -1,6 +1,6 @@
 from ast import Return
 import config.setup
-from modules.interface.menus import menu_builder, clean_screen
+from modules.interface.menus import menu_builder
 from modules.interface.menus import datosANDvalidacion_numeros
 from modules.database.users import Base_de_datos
 
@@ -9,12 +9,13 @@ accion =  menu_builder('Bienvenido a Proyecto T',
             ['Ingresar', 'Registrarse'],
             '',
             return_value= True, default_options=['Salir',])
-            
+
+Base_de_datos = Base_de_datos("data/users.csv")
+
 while accion == 'Ingresar': 
     usuario=datosANDvalidacion_numeros()
     contraseña=input('Ingrese su contraseña\n')
-    Base_de_datos = Base_de_datos("data/users.csv")
-    ##verifacion=Base_de_datos.validar_usuario(usuario,contraseña) #aquí se está usando una función nueva
+    verifacion=Base_de_datos.validar_usuario(usuario,contraseña) #aquí se está usando una función nueva
     verifacion=True
     while verifacion==False:
         accionDos=menu_builder('Los datos no coinciden',
