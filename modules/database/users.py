@@ -74,4 +74,5 @@ class Base_de_datos:
 
 if __name__ == "__main__":
     import os
-    ruta = os.path.realpath(os.path.join(__file__, "../../../data/users.csv"))
+    test = Base_de_datos("./test.csv")
+    test.crear_usuario(123, "abc", "hombre", 23, "daniel", "rayo", "hola, py")
