@@ -5,10 +5,14 @@ connection = sqlite3.connect('data/statistics.db');
 db = connection.cursor();
 
 def iniciar_db():
-    query_usuarios = 'CREATE TABLE if not exists "usuarios" ("telefono" INTEGER NOT NULL UNIQUE, "usuario" TEXT, "edad" INTEGER, "genero" INTEGER, PRIMARY KEY("telefono"))';
+    query_usuarios = 'CREATE TABLE if not exists "usuarios" ("telefono" INTEGER NOT NULL UNIQUE, "contrasena" TEXT, "genero" INTEGER, "edad" INTEGER, "nombre" TEXT, "apellido" TEXT, PRIMARY KEY("telefono"))';
     query_busquedas = 'CREATE TABLE if not exists "busquedas" ("valor" TEXT NOT NULL UNIQUE, "conteo" INTEGER DEFAULT 1, PRIMARY KEY("valor"))';
+    query_contactos = 'CREATE TABLE if not exists "contactos" ("telefono" INTEGER UNIQUE, "contacto" INTEGER, "id" INTEGER PRIMARY KEY AUTOINCREMENT)';
+    query_ocupaciones = 'CREATE TABLE if not exists "ocupaciones" ("telefono" INTEGER UNIQUE, "ocupacion" TEXT, "id" INTEGER PRIMARY KEY AUTOINCREMENT)';
     db.execute(query_usuarios);
     db.execute(query_busquedas);
+    db.execute(query_contactos);
+    db.execute(query_ocupaciones);
     connection.commit();
 
 # 0 -> Masculino
@@ -80,6 +84,8 @@ def ordenar_busquedas(columna: DatosBusqueda, orden: ModoOrden):
     
     return busquedas;
 
+
+iniciar_db();
 
 #crear_usuario(65331782, 'Pablo', 20, 0);
 #crear_usuario(36541287, 'Karla', 19, 1);
