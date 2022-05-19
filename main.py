@@ -1,7 +1,7 @@
 import config.setup
 from modules.interface.menus import menu_builder, clean_screen
 from modules.interface.menus import datosANDvalidacion_numeros
-from modules.database.users import Base_de_datos
+from modules.database.lectorDB import Base_de_datos
 
 
 accion =  menu_builder('Bienvenido a Proyecto T',
