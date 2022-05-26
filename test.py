@@ -1,24 +1,9 @@
 import pandas as pd
-from modules.database import lectorDB
-from modules.database.lectorDB import Lector_BD, BD_usuarios, Usuario
+from modules.database.lector_DB import BD_contactos, BD_ocupaciones, Lector_BD, BD_usuarios, BD
 from config.definitions import CARPETA_RAIZ
-from sqlalchemy import create_engine
+from modules.database.campos_DB import Nombres_Tablas
+from modules.database.objects_DB import Usuario
 
-path = CARPETA_RAIZ + "/data/statistics.db"
-uwu  = BD_usuarios(path, "usuarios")
-print(uwu.obtener_dataframe())
-daniel = Usuario(4, "soroArx5#", "Hombre", 18, "Giovanna", "Rayo")
-#uwu.editar_telefono_usuario(daniel, 55551117)
+ruta = "./data/database.db"
 
-
-
-#POR SI LA LIO CON LOS NOMBRES
-# uwu = Lector_BD(path, "usuarios")
-# temp_data = uwu.obtener_dataframe()
-# print(temp_data)
-# temp_data.drop(["level_0", "index"], axis=1, inplace=True)
-# temp_data.reset_index(inplace=True)
-# temp_data.rename({"index":"telefono"}, axis=1, inplace=True)
-# uwu.DATOS = temp_data
-# uwu.escribir_database()
-# print(temp_data)
+base_de_datos = BD(ruta, Nombres_Tablas.USUARIOS, Nombres_Tablas.CONTACTOS, Nombres_Tablas.OCUPACIONES)

@@ -6,6 +6,11 @@ class Campos_Usuario:
     EDAD = "edad"
     NOMBRE = "nombre"
     APELLIDO = "apellido"
+    TIENE_CUENTA = "tiene_cuenta"
+    BUSCA_TRABAJO = "busca_trabajo"
+    BUSCA_TRABAJADOR = "busca_trabajador"
+    CONTACTOS = 'contactos'
+    OCUPACIONES = 'ocupaciones'
 
 class Campos_Contactos:
     TELEFONO = "telefono"
@@ -13,9 +18,9 @@ class Campos_Contactos:
 
 class Campos_Ocupacion:
     TELEFONO = "telefono"
-    CONTACTOS = "ocupacion"
+    OCUPACION = "ocupacion"
 
 class Nombres_Tablas:
     USUARIOS = "usuarios"
-    CONTACTOS = "contacto"
-    OCUPACIONES = "ocupacion"
+    CONTACTOS = "contactos"
+    OCUPACIONES = "ocupaciones"
