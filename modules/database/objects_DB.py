@@ -8,7 +8,6 @@ class Usuario:
     EDAD = ""
     NOMBRE = ""
     APELLIDO = ""
-    TIENE_CUENTA: bool = False
     BUSCA_TRABAJO: bool = False
     BUSCA_TRABAJADOR: bool = False
     CONTACTOS: List[int] = []
@@ -22,7 +21,8 @@ class Usuario:
         edad: int,
         nombre: str,
         apellido: str,
-        tiene_cuenta: bool,
+        busca_trabajo: bool,
+        busca_trabajador = bool
     ) -> None:
         self.TELEFONO = telefono
         self.CONTRASENA = contrasena
@@ -30,7 +30,8 @@ class Usuario:
         self.EDAD = edad
         self.NOMBRE = nombre
         self.APELLIDO = apellido
-        self.TIENE_CUENTA = tiene_cuenta
+        self.BUSCA_TRABAJO = busca_trabajo
+        self.BUSCA_TRABAJADOR = busca_trabajador
 
     def user_as_dict(self, campos_ignorados:list=[]):
         usuario = {
@@ -40,7 +41,6 @@ class Usuario:
             Campos_Usuario.EDAD: self.EDAD,
             Campos_Usuario.NOMBRE: self.NOMBRE,
             Campos_Usuario.APELLIDO: self.APELLIDO,
-            Campos_Usuario.TIENE_CUENTA: self.TIENE_CUENTA,
             Campos_Usuario.BUSCA_TRABAJO: self.BUSCA_TRABAJO,
             Campos_Usuario.BUSCA_TRABAJADOR: self.BUSCA_TRABAJADOR,
             Campos_Usuario.OCUPACIONES: self.OCUPACIONES,
@@ -52,6 +52,6 @@ class Usuario:
 
     def establecer_contactos(self, contactos:List[int]) -> None:
         self.CONTACTOS = contactos
-        
+
     def establecer_ocupaciones(self, ocupaciones: List[str]) -> None:
         self.OCUPACIONES = ocupaciones

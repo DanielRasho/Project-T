@@ -11,6 +11,9 @@ from .campos_DB import (
     Nombres_Tablas,
 )
 
+# TIPOS
+Telefono = int
+
 class Lector_BD:
     RUTA: str = ""
     DATOS: pd.DataFrame = None
@@ -199,8 +202,8 @@ class BD_usuarios:
             usuario.TELEFONO, usuario.user_as_dict(), columna_indice= Campos_Usuario.TELEFONO
         )
 
-    def eliminar_usuario(self, usuario: Usuario) -> bool:
-        return self.LECTOR_DB_USUARIOS.eliminar_item(usuario.TELEFONO, Campos_Usuario.TELEFONO)
+    def eliminar_usuario(self, telefono:int) -> bool:
+        return self.LECTOR_DB_USUARIOS.eliminar_item(telefono, Campos_Usuario.TELEFONO)
 
     def validar_usuario(self, telefono: int, contrasena: str) -> bool:
         if self.existe_usuario(telefono) == True:
@@ -239,7 +242,7 @@ class BD_contactos:
     def __init__(self, ruta: str, tabla_contactos: Nombres_Tablas):
         self.LECTOR_DB_CONTACTO = Lector_BD(ruta, tabla_contactos)
 
-    def obtener_contactos_usuario(self, telefono_usuario:int) -> list[int]:
+    def obtener_contactos_usuario(self, telefono_usuario:int) -> list[Telefono]:
         contactos = self.LECTOR_DB_CONTACTO.buscar_items(
             Campos_Contactos.TELEFONO, [telefono_usuario], metodo="exacto"
         )
@@ -248,13 +251,13 @@ class BD_contactos:
             telefonos_contactos.append(contacto[Campos_Contactos.CONTACTOS])
         return telefonos_contactos
 
-    def existe_contacto(self, usuario:Usuario, telefono_contacto: int) -> bool:
-        return (telefono_contacto in self.obtener_contactos_usuario(usuario.TELEFONO))
+    def existe_contacto(self, telefono_usuario, telefono_contacto: int) -> bool:
+        return (telefono_contacto in self.obtener_contactos_usuario(telefono_usuario))
 
     def agregar_contacto(self, usuario: Usuario, telefono_contacto: int) -> bool:
         if usuario.TELEFONO == telefono_contacto:
             raise("El telefono del usuario y el contacto, no pueden ser iguales.")
-        if self.existe_contacto(usuario, telefono_contacto) == True:
+        if self.existe_contacto(usuario.TELEFONO, telefono_contacto) == True:
             return False
         new_index = len(self.LECTOR_DB_CONTACTO.obtener_dataframe().index)
         hubo_exito = self.LECTOR_DB_CONTACTO.agregar_nuevo_item(
@@ -269,14 +272,14 @@ class BD_contactos:
             return True
         else: 
             return False
-    
-    def eliminar_contacto(self, usuario: Usuario, telefono_contacto: int) -> bool:
+
+    def eliminar_contacto(self, telefono_usuario, telefono_contacto: int) -> bool:
         if Usuario.TELEFONO == telefono_contacto:
             raise("El telefono del usuario y el contacto, no pueden ser iguales.")
-        elif self.existe_contacto(usuario, telefono_contacto) == True:
+        elif self.existe_contacto(telefono_usuario, telefono_contacto) == True:
             datos = self.LECTOR_DB_CONTACTO.obtener_dataframe()
             contactos_index = datos.index[
-                (datos[Campos_Contactos.TELEFONO] == usuario.TELEFONO) & 
+                (datos[Campos_Contactos.TELEFONO] == telefono_usuario) & 
                 (datos[Campos_Contactos.CONTACTOS] == telefono_contacto)].to_list()
             if len(contactos_index) != 0:
                 for contacto in contactos_index:
@@ -305,11 +308,11 @@ class BD_ocupaciones:
             ocupaciones_usuario.append(ocupacion[Campos_Ocupacion.OCUPACION])
         return ocupaciones_usuario
 
-    def existe_ocupacion(self, usuario:Usuario, ocupacion_usuario:str ) -> bool:
-        return (ocupacion_usuario in self.obtener_ocupaciones_usuario(usuario.TELEFONO))
+    def existe_ocupacion(self, telefono_usuario, ocupacion_usuario:str ) -> bool:
+        return (ocupacion_usuario in self.obtener_ocupaciones_usuario(telefono_usuario))
 
     def agregar_ocupacion(self, usuario:Usuario, ocupacion_usuario:str) -> bool:
-        if self.existe_ocupacion(usuario, ocupacion_usuario) == True:
+        if self.existe_ocupacion(usuario.TELEFONO, ocupacion_usuario) == True:
             return False
         new_index = len(self.LECTOR_DB_OCUPACIONES.obtener_dataframe().index)
         hubo_exito = self.LECTOR_DB_OCUPACIONES.agregar_nuevo_item(
@@ -324,7 +327,7 @@ class BD_ocupaciones:
         else: 
             return False
 
-    def eliminar_contacto(self, usuario:Usuario, ocupacion_usuario: str) -> bool:
+    def eliminar_ocupacion(self, usuario, ocupacion_usuario: str) -> bool:
         if self.existe_contacto(usuario, ocupacion_usuario) == True:
             datos = self.LECTOR_DB_OCUPACIONES.obtener_dataframe()
             ocupaciones_index = datos.index[
@@ -339,7 +342,7 @@ class BD_ocupaciones:
     def obtener_dataframe(self):
         return self.LECTOR_DB_OCUPACIONES.obtener_dataframe()
     
-class BD(BD_usuarios, BD_contactos, BD_ocupaciones):
+class Base_De_Datos(BD_usuarios, BD_contactos, BD_ocupaciones):
 
     def __init__(self, ruta:str, nombre_tabla_usuarios, nombre_tabla_contactos, nombre_tabla_ocupaciones) -> None:
         BD_usuarios.__init__(self, ruta, nombre_tabla_usuarios)
@@ -356,16 +359,54 @@ class BD(BD_usuarios, BD_contactos, BD_ocupaciones):
             usuario.establecer_ocupaciones(ocupaciones_usuario)
             return usuario
 
-    def registrar_contactos(self, usuario: Usuario, telefono_contacto:int):
-        if self.existe_usuario(telefono_contacto) == False:
-            return False
-        else:
-            return self.agregar_contacto(usuario, telefono_contacto)
+    def registrar_usuario(self, usuario:Usuario) -> bool:
+        if self.validar_usuario(usuario.TELEFONO, usuario.CONTRASENA) == False:
+            a = self.crear_usuario(usuario)
+            for contacto in usuario.CONTACTOS:
+                b = self.agregar_contacto(usuario, contacto)
+            for ocupacion in usuario.OCUPACIONES:
+                c = self.agregar_ocupacion(usuario, ocupacion)
+            if a == False:
+                raise("Hubo un error al crear el usuario.")
+            elif b == False:
+                raise("Hubor un error al agregar los contactos")
+            elif c == False:
+                raise("Hubo un error al agregar las ocupaciones")
+            else:
+                return True
+        return False
+    
+
+    # PENDIENTE POR PROBAR
+    ''''
+    def eliminar_cuenta_usuario(self, telefono_usuario, contrasena:str) -> bool:
+
+        if self.validar_usuario(usuario.TELEFONO) == True:
+            a = self.eliminar_usuario(usuario)
+            for contacto in usuario.CONTACTOS:
+                b = self.eliminar_contacto(usuario.TELEFONO, contacto)
+            for ocupacion in usuario.OCUPACIONES:
+                c = self.eliminar_ocupacion(usuario, ocupacion)
+            if a == False:
+                raise("Hubo un error al eliminar el usuario.")
+            elif b == False:
+                raise("Hubor un error al eliminar los contactos")
+            elif c == False:
+                raise("Hubo un error al eliminar las ocupaciones")
+            else:
+                return True
+        return False
+    '''
+
 
     def busqueda_recursiva_por_ocupacion(self, usuario:Usuario, ocupacion:str) -> list[int]:
-
         # DEVUELVE LISTA DE TELEFONOS
         pass
+
+    def mostrar_tablas(self) -> None:
+        print(self.LECTOR_DB_USUARIOS.obtener_dataframe())
+        print(self.LECTOR_DB_OCUPACIONES.obtener_dataframe())
+        print(self.LECTOR_DB_CONTACTO.obtener_dataframe())
 
 
 if __name__ == "__main__":
