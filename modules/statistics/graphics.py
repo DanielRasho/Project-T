@@ -1,9 +1,9 @@
 import matplotlib;
 import matplotlib.pyplot as pyplot;
 import numpy as numpy;
-import database_access as db;
-import utils;
-from database_enums import DatosUsuario, DatosBusqueda, ModoOrden;
+from .database_access import *;
+from .utils import *;
+from .database_enums import DatosUsuario, DatosBusqueda, ModoOrden;
 from enum import Enum;
 
 class TipoGrafica(Enum):
@@ -13,15 +13,16 @@ class TipoGrafica(Enum):
 #PARÁMETROS = tipo: TipoGrafica Ej: TipoGrafica.BARRAS
 #RETORNAR   = Nada
 #MUESTRA LA GRÁFICA DE USUARIOS AGRUPADOS POR EDAD
+
 def usuarios_por_edad(tipo: TipoGrafica):
-    usuarios = db.agrupar_usuarios_por_columna(DatosUsuario.EDAD);
+    usuarios = agrupar_usuarios_por_columna(DatosUsuario.EDAD);
     eje_x = list(map(lambda x: x[0], usuarios));
     eje_y = list(map(lambda x: x[1], usuarios));
     
     if (tipo == TipoGrafica.CIRCULAR):
-        labels = utils.agregar_label_lista(eje_x, 'años') 
-        porcentajes = utils.porcentajes_de_valores(eje_y);        
-        explode = utils.obtener_explode(porcentajes);
+        labels = agregar_label_lista(eje_x, 'años') 
+        porcentajes = porcentajes_de_valores(eje_y);        
+        explode = obtener_explode(porcentajes);
         
         fig, axs = pyplot.subplots()
         fig.canvas.manager.set_window_title('Estadísticas');
@@ -38,7 +39,7 @@ def usuarios_por_edad(tipo: TipoGrafica):
         axs.set_ylabel('Cantidad De Usuarios');
         axs.set_title('Gráfica Edades');
         
-        eje_x = utils.agregar_label_lista(eje_x, 'años');
+        eje_x = agregar_label_lista(eje_x, 'años');
         axs.set_yticks(range(min(eje_y), max(eje_y) + 1));
         
         pyplot.bar(eje_x, eje_y);
@@ -50,14 +51,14 @@ def usuarios_por_edad(tipo: TipoGrafica):
 #RETORNAR   = Nada
 #MUESTRA LA GRÁFICA DE USUARIOS AGRUPADOS POR GÉNERO
 def usuarios_por_genero(tipo: TipoGrafica):
-    usuarios = db.agrupar_usuarios_por_columna(DatosUsuario.GENERO);
+    usuarios = agrupar_usuarios_por_columna(DatosUsuario.GENERO);
     eje_x = list(map(lambda x: 'Masculino' if x[0] == 0 else 'Femenino', usuarios));
     eje_y = list(map(lambda x: x[1], usuarios));
     
     if (tipo == TipoGrafica.CIRCULAR):
         labels = eje_x;
-        porcentajes = utils.porcentajes_de_valores(eje_y);
-        explode = utils.obtener_explode(porcentajes);
+        porcentajes = porcentajes_de_valores(eje_y);
+        explode = obtener_explode(porcentajes);
         
         fig, axs = pyplot.subplots()
         fig.canvas.manager.set_window_title('Estadísticas');
@@ -86,14 +87,14 @@ def usuarios_por_genero(tipo: TipoGrafica):
 #RETORNAR   = Nada
 #MUESTRA LA GRÁFICA DE BÚSQUEDAS AGRUPADOS POR CONTEO
 def busquedas_por_conteo(tipo: TipoGrafica):
-    busquedas = db.obtener_busquedas();
+    busquedas = obtener_busquedas();
     eje_x = list(map(lambda x: x[0], busquedas));
     eje_y = list(map(lambda x: x[1], busquedas));
     
     if (tipo == TipoGrafica.CIRCULAR):
         labels = eje_x;
-        porcentajes = utils.porcentajes_de_valores(eje_y);
-        explode = utils.obtener_explode(porcentajes);
+        porcentajes = porcentajes_de_valores(eje_y);
+        explode = obtener_explode(porcentajes);
         
         fig, axs = pyplot.subplots()
         fig.canvas.manager.set_window_title('Estadísticas');

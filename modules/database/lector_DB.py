@@ -374,19 +374,16 @@ class BD_ocupaciones:
         else:
             return False
 
-    def eliminar_ocupacion(self, usuario: Usuario, ocupacion_usuario: str) -> bool:
-        if usuario is None:
-            raise (
-                "El parametro usuario es tipo None. Intruzca un objeto de la clase Usuario."
-            )
-        if self.existe_contacto(usuario, ocupacion_usuario) == True:
+    def eliminar_ocupacion(self, telefono_usuario: int, ocupacion_usuario: str) -> bool:
+        if self.existe_ocupacion(telefono_usuario, ocupacion_usuario) == True:
             datos = self.LECTOR_DB_OCUPACIONES.obtener_dataframe()
-            ocupaciones_index = datos.index[
-                (datos[Campos_Ocupacion.TELEFONO] == usuario.TELEFONO)
+            ocupacion_index = datos.index[
+                (datos[Campos_Ocupacion.TELEFONO] == telefono_usuario)
                 & (datos[Campos_Ocupacion.OCUPACION] == ocupacion_usuario)
             ].to_list()
-            if len(ocupaciones_index) != 0:
-                for ocupacion in ocupaciones_index:
+
+            if len(ocupacion_index) != 0:
+                for ocupacion in ocupacion_index:
                     self.LECTOR_DB_OCUPACIONES.eliminar_item(ocupacion)
                     return True
         return False

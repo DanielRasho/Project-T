@@ -1,5 +1,5 @@
 import sqlite3;
-from database_enums import DatosUsuario, DatosBusqueda, ModoOrden;
+from .database_enums import DatosUsuario, DatosBusqueda, ModoOrden;
 
 connection = sqlite3.connect('data/statistics.db');
 db = connection.cursor();

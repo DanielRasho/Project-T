@@ -73,7 +73,7 @@ class Usuario:
         for ocupacion in self.OCUPACIONES:
             info_user += f"{ocupacion},"
 
-        info_user += "CONTACTOS:\n"
+        info_user += "\nCONTACTOS:\n"
         for contacto in self.CONTACTOS:
             info_user += f"{contacto}\n"
 
