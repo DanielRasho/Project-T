@@ -1,5 +1,9 @@
 import config.setup
-import curses
+try:
+    import curses
+except:
+    print("curses is not installed, try running:\npython -m pip install windows-curses")
+    exit()
 from modules.interface.menus import *
 from typing import Tuple
 from config.definitions import CARPETA_RAIZ
