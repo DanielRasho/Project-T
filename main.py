@@ -340,5 +340,6 @@ Disfruta!
         elif selected_option == "Salir":
             break
 
-
+print("ESTE PROGRAMA NO PUEDE SER CORRIDO EN UN UNA TERMINAL INTEGRADA DE UN EDITOR DE CODIGO.\n\nFavor correrlo en un terminal independiente, y maximizar la ventana")
+input("Presiona <Enter> to continue...")
 curses.wrapper(main)
