@@ -18,7 +18,7 @@ RUTA = CARPETA_RAIZ + "/data/database.db"
 ESCRITOR_DB = Base_De_Datos(
     RUTA, Nombres_Tablas.USUARIOS, Nombres_Tablas.CONTACTOS, Nombres_Tablas.OCUPACIONES
 )
-ESCRITOR_DB.limpiar_tablas()
+#ESCRITOR_DB.limpiar_tablas()
 
 banner = r"""
  _______                                                           __           
@@ -57,7 +57,7 @@ def login_page(screen) -> Tuple[int, str]:
         telefono_valido = es_telefono_valido(telefono)
         screen.clear()
         contrasena = textbox_builder(screen, 50, 10, "INGRESA TU CONTRASENA", "ENTER")
-        existe_usuario = ESCRITOR_DB.validar_usuario(int(telefono), contrasena)
+        existe_usuario = ESCRITOR_DB.validar_usuario(telefono, contrasena)
 
         if existe_usuario == False or telefono_valido == False:
             alert_message(
@@ -72,7 +72,8 @@ def login_page(screen) -> Tuple[int, str]:
                 screen, "¿Quieres seguir intentando?"
             )
         else:
-            return (int(telefono), contrasena)
+            return (telefono, contrasena)
+    return (None, None)
 
 
 def signup_page(screen):
@@ -141,20 +142,25 @@ def signup_page(screen):
                     "Tu usuario a sido registrado con exito, disfruta!",
                     "ENTER",
                 )
+                break
 
 
 def main_page(screen, usuario: Usuario):
-    option = menu_builder(
-        screen,
-        50,
-        "¿Que quieres hacer?",
-        ["Buscar Trabajador", "Ver mi perfil"],
-        "Presiona <Enter> para continuar.",
-    )
-    if option == "Buscar Trabajador":
-        pass
-    elif option == "Ver mi perfil":
-        user_page(screen, usuario)
+    while True:
+        option = menu_builder(
+            screen,
+            50,
+            "¿Que quieres hacer?",
+            ["Buscar Trabajador", "Ver mi perfil"],
+            "Presiona <Enter> para continuar.",
+            ["Salir"]
+        )
+        if option == "Buscar Trabajador":
+            pass
+        elif option == "Ver mi perfil":
+            user_page(screen, usuario)
+        elif option == "Salir":
+            break
 
 
 def user_page(screen, usuario: Usuario):
@@ -174,22 +180,24 @@ def user_page(screen, usuario: Usuario):
             ["Regresar"],
         )
         if option == "Ver mis datos":
-            pass
+            usuario = ESCRITOR_DB.obtener_usuario(usuario.TELEFONO, usuario.CONTRASENA)
+            alert_message(screen, 50, 30, "MI PERFIL", usuario.user_as_str(), "ENTER")
         elif option == "Agregar contacto":
             telefono_contacto = textbox_builder(
                 screen, 50, 10, "Ingresa el telefono de tu conocido:", "Enter"
             )
+            
             if (
                 es_telefono_valido(telefono_contacto) == False
-                or ESCRITOR_DB.existe_contacto(usuario.TELEFONO, telefono_contacto)
-                == True
+                or ESCRITOR_DB.existe_contacto(usuario.TELEFONO, telefono_contacto) == True
+                or ESCRITOR_DB.existe_usuario(telefono_contacto) == False
             ):
                 alert_message(
                     screen,
                     50,
-                    5,
+                    8,
                     "ATENCION",
-                    "Parece que el telefono ingresado no es valido, o ya esta en tu lista de contactos",
+                    "Parece que el telefono ingresado no es valido o ya esta en tu lista de contactos. Recuerda que solo puedes anadir telefonos de personas que esten registradas en la app",
                     "ENTER",
                 )
             else:
@@ -204,12 +212,59 @@ def user_page(screen, usuario: Usuario):
                 )
 
         elif option == "Eliminar contacto":
-            pass
+            telefono_contacto = textbox_builder(
+                screen, 50, 10, "Ingresa el telefono de tu conocido:", "Enter"
+            )
+            if (
+                es_telefono_valido(telefono_contacto) == False
+                or ESCRITOR_DB.existe_contacto(usuario.TELEFONO, telefono_contacto)
+                == False
+            ):
+                alert_message(
+                    screen,
+                    50,
+                    5,
+                    "ATENCION",
+                    "Parece que el telefono ingresado no es valido, o no esta en tu lista de contactos",
+                    "ENTER",
+                )
+            else:
+                ESCRITOR_DB.eliminar_contacto(usuario, telefono_contacto)
+                alert_message(
+                    screen,
+                    50,
+                    5,
+                    "EXITO",
+                    "Tu contacto ha sido removido con exito",
+                    "ENTER",
+                )
         elif option == "Agregar ocupacion":
-            pass
+            ocupacion = textbox_builder(
+                screen, 50, 10, "Ingresa tu nuevo ocupacion:", "Enter"
+            )
+            
+            if ESCRITOR_DB.existe_ocupacion(usuario.TELEFONO, ocupacion) == False:
+                alert_message(
+                    screen,
+                    50,
+                    8,
+                    "ATENCION",
+                    "Parece que el telefono ingresado no es valido o ya esta en tu lista de contactos. Recuerda que solo puedes anadir telefonos de personas que esten registradas en la app",
+                    "ENTER",
+                )
+            else:
+                ESCRITOR_DB.agregar_ocupacion(usuario, ocupacion)
+                alert_message(
+                    screen,
+                    50,
+                    5,
+                    "EXITO",
+                    "Tu contacto fue agregado con exito",
+                    "ENTER",
+                )
         elif option == "Eliminar ocupacion":
             pass
-        elif option == "Salir":
+        elif option == "Regresar":
             break
 
 
@@ -234,7 +289,7 @@ def main(screen: curses.window):
             screen,
             40,
             "BIENVENIDO",
-            ["Ingresar", "Registrarme", "Sobre nosotros", "Estadisticas"],
+            ["Ingresar", "Registrarme", "Sobre nosotros", "Ver tablas", "Estadisticas"],
             "Presionar <Enter> para confirmar",
             default_options=["Salir"],
         )
@@ -242,8 +297,10 @@ def main(screen: curses.window):
 
         if selected_option == "Ingresar":
             telefono_usuario, contrasena_usuario = login_page(screen)
-            usuario = ESCRITOR_DB.obtener_usuario(telefono_usuario, contrasena_usuario)
-            main_page(screen, usuario)
+            if telefono_usuario is not None or contrasena_usuario is not None:
+                usuario = ESCRITOR_DB.obtener_usuario(telefono_usuario, contrasena_usuario)
+                main_page(screen, usuario)
+
         elif selected_option == "Registrarme":
             signup_page(screen)
         elif selected_option == "Sobre nosotros":
@@ -264,6 +321,12 @@ Disfruta!
     El equipo de ChambaYa!""",
                 "ENTER",
             )
+        elif selected_option == "Ver tablas":
+            screen.clear()
+            screen.addstr(ESCRITOR_DB.obtener_dataframes_str())
+            screen.addstr("\n\nPresionar cualquier tecla para continuar...")
+            screen.refresh()
+            screen.getch()
         elif selected_option == "Estadisticas":
             pass
         elif selected_option == "Salir":

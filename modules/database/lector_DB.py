@@ -231,6 +231,7 @@ class BD_usuarios:
                 datos.reset_index(inplace=True)
                 return True
             else:
+                datos.reset_index(inplace=True)
                 return False
         else:
             return False
@@ -485,10 +486,47 @@ class Base_De_Datos(BD_usuarios, BD_contactos, BD_ocupaciones):
 
         return coincidencias_finales
 
+    def agregar_contacto(self, usuario: Usuario, telefono_contacto: int) -> bool:
+        if usuario is None:
+            raise (
+                "El parametro usuario es tipo None. Intruzca un objeto de la clase Usuario."
+            )
+        if usuario.TELEFONO == telefono_contacto:
+            raise ("El telefono del usuario y el contacto, no pueden ser iguales.")
+        if self.existe_contacto(usuario.TELEFONO, telefono_contacto) == True:
+            return False
+        if self.existe_usuario(telefono_contacto) == False:
+            return False
+        new_index = len(self.LECTOR_DB_CONTACTO.obtener_dataframe().index)
+        hubo_exito = self.LECTOR_DB_CONTACTO.agregar_nuevo_item(
+            new_index,
+            {
+                Campos_Contactos.TELEFONO: usuario.TELEFONO,
+                Campos_Contactos.CONTACTOS: telefono_contacto,
+            },
+            columna_indice=None,
+        )
+
+        if hubo_exito == True:
+            self.LECTOR_DB_CONTACTO.ordenar_dataframe([Campos_Contactos.TELEFONO])
+            return True
+        else:
+            return False
+
     def mostrar_tablas(self) -> None:
         print(self.LECTOR_DB_USUARIOS.obtener_dataframe())
         print(self.LECTOR_DB_OCUPACIONES.obtener_dataframe())
         print(self.LECTOR_DB_CONTACTO.obtener_dataframe())
+
+    def obtener_dataframes_str(self) -> str:
+        tablas = ""
+        tablas += "USUARIOS\n\n"
+        tablas += self.LECTOR_DB_USUARIOS.obtener_dataframe().to_string()
+        tablas += "\n\nCONTACTOS\n\n"
+        tablas += self.LECTOR_DB_CONTACTO.obtener_dataframe().to_string()
+        tablas += "\n\nOCUPACIONES\n\n"
+        tablas += self.LECTOR_DB_OCUPACIONES.obtener_dataframe().to_string()
+        return tablas
 
     def limpiar_tablas(self) -> None:
         self.LECTOR_DB_USUARIOS.limpiar_dataframe()
